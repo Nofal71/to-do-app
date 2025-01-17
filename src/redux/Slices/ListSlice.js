@@ -20,10 +20,9 @@ export const ListSlice = createSlice({
             state.list = state.list.map(item =>
                 item.path === path ? { ...item, data: [...item.data, data] } : item
             );
+            const newData = { ...data, homeTag: path.toUpperCase() }
+            state.list[0].data = [...state.list[0].data, newData]
         },
-
-
-
     },
 });
 

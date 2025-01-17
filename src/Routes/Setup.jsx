@@ -53,7 +53,7 @@ const ListLayout = ({ listData }) => {
   return (
     <MainLayout>
       <ListHead />
-      <ListComponent list={listData} />
+      <ListComponent list={listData}  />
     </MainLayout>
   );
 }

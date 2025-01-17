@@ -1,13 +1,15 @@
 import React from 'react'
 import { Box, Typography, Stack, Divider, Checkbox, IconButton, useTheme } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { useLocation } from 'react-router-dom';
 
 const ListComponent = ({ list }) => {
     const theme = useTheme();
+    const location = useLocation()
     return (
         <>
             {
-                list?.length !== 0  ? (
+                list?.length !== 0 ? (
                     <Box sx={{ p: 3, backgroundColor: theme.palette.background.default, minHeight: '100vh' }}>
                         <Box
                             sx={{
@@ -17,6 +19,15 @@ const ListComponent = ({ list }) => {
                                 boxShadow: theme.shadows[2],
                             }}
                         >
+                            {
+                                location.pathname === '/home' && (
+                                    <Box sx={{
+                                        pb: 4
+                                    }}>
+                                        <Typography variant='h5' color='primary'>Today</Typography>
+                                    </Box>
+                                )
+                            }
                             <Stack spacing={2}>
                                 {list?.map((task, index) => (
                                     <Box key={index}>
@@ -33,24 +44,19 @@ const ListComponent = ({ list }) => {
                                                     >
                                                         {task.title}
                                                     </Typography>
-                                                    {task.tags.length > 0 && (
-                                                        <Stack direction="row" spacing={1} mt={0.5}>
-                                                            {task.tags.map((tag, tagIndex) => (
-                                                                <Typography
-                                                                    key={tagIndex}
-                                                                    variant="caption"
-                                                                    sx={{
-                                                                        backgroundColor: theme.palette.primary.light,
-                                                                        color: theme.palette.primary.contrastText,
-                                                                        px: 1,
-                                                                        borderRadius: 1,
-                                                                        fontSize: '0.75rem',
-                                                                    }}
-                                                                >
-                                                                    {tag}
-                                                                </Typography>
-                                                            ))}
-                                                        </Stack>
+                                                    {location.pathname === '/home' && (
+                                                        <Typography
+                                                            variant="caption"
+                                                            sx={{
+                                                                backgroundColor: theme.palette.primary.light,
+                                                                color: theme.palette.primary.contrastText,
+                                                                px: 1,
+                                                                borderRadius: 1,
+                                                                fontSize: '0.75rem',
+                                                            }}
+                                                        >
+                                                            {task?.homeTag}
+                                                        </Typography>
                                                     )}
                                                 </Box>
                                             </Stack>
