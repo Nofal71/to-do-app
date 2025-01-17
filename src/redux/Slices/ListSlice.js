@@ -3,7 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 export const ListSlice = createSlice({
     name: "list",
     initialState: {
-        list: [],
+        list: [
+            { name: 'Home', path: 'home', data: [] }
+        ],
     },
     reducers: {
         addListItem: (state, action) => {

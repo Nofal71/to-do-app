@@ -20,7 +20,7 @@ const MainLayout = ({ children }) => {
   const { currentList } = useList()
   useEffect(() => {
     if (currentList?.length === 1) {
-      `/${currentList[0].path}` !== location.pathname && navigator(currentList[0].path)
+      currentList[0].path !== decodeURIComponent(location.pathname?.slice(1)).replace(/%20/g, ' ') && navigator(currentList[0].path)
     }
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [location, currentList])
