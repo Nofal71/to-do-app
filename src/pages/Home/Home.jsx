@@ -1,93 +1,23 @@
 import React from 'react'
-import useFeedBacks from '../../redux/Providers/FeedBacksProviders'
-import { Box, Typography, Stack, Divider, Checkbox, IconButton, useTheme } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Box, useTheme } from '@mui/material';
+import ListComponent from '../../Components/page-components/ListComponent';
+import ListHead from '../../Components/page-components/ListHead';
 
-const tasks = [
-  { title: "Read a book", time: "08:00 - 09:00", tags: [] },
-  { title: "Moodboard Landing Page", time: "11:00 - 13:00", tags: ["Mobal Project"] },
-];
+const tasks = {
+  list: 'Home',
+  data: [
+    { title: "Read a book", time: "08:00 - 09:00", tags: [] },
+    { title: "Moodboard Landing Page", time: "11:00 - 13:00", tags: ["Mobal Project"] },
+  ]
+};
 
 const Home = () => {
   const theme = useTheme();
-  const date = new Date();
-  const { setSnackBar, setAlert, setConfirm, setNewConfirm } = useFeedBacks()
 
   return (
-    <Box sx={{ p: 3, backgroundColor: theme.palette.background.default, minHeight: '100vh' }}>
-      <Box mb={4}>
-        <Typography variant="h4" sx={{ fontWeight: 700, color: theme.palette.text.primary }}>
-          Good Morning, Sullivan! 👋
-        </Typography>
-        <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary }}>
-          {`Today, ${date.toLocaleString('en-US', { weekday: 'short' })} ${date.getDate()} ${date.toLocaleString('en-US', { month: 'long' })}, ${date.getFullYear()}`}
-        </Typography>
-
-      </Box>
-      <Box
-        sx={{
-          backgroundColor: theme.palette.background.paper,
-          borderRadius: 2,
-          p: 3,
-          boxShadow: theme.shadows[2],
-        }}
-      >
-        <Stack spacing={2}>
-          {tasks.map((task, index) => (
-            <Box key={index}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Stack direction="row" alignItems="center" spacing={2}>
-                  <Checkbox />
-                  <Box>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        fontWeight: 500,
-                        color: theme.palette.text.primary,
-                      }}
-                    >
-                      {task.title}
-                    </Typography>
-                    {task.tags.length > 0 && (
-                      <Stack direction="row" spacing={1} mt={0.5}>
-                        {task.tags.map((tag, tagIndex) => (
-                          <Typography
-                            key={tagIndex}
-                            variant="caption"
-                            sx={{
-                              backgroundColor: theme.palette.primary.light,
-                              color: theme.palette.primary.contrastText,
-                              px: 1,
-                              borderRadius: 1,
-                              fontSize: '0.75rem',
-                            }}
-                          >
-                            {tag}
-                          </Typography>
-                        ))}
-                      </Stack>
-                    )}
-                  </Box>
-                </Stack>
-                <Stack direction="row" alignItems="center" spacing={2}>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: theme.palette.text.secondary,
-                    }}
-                  >
-                    {task.time}
-                  </Typography>
-                  <IconButton>
-                    <MoreVertIcon />
-                  </IconButton>
-                </Stack>
-              </Stack>
-              {index < tasks.length - 1 && <Divider sx={{ my: 2 }} />}
-            </Box>
-          ))}
-        </Stack>
-      </Box>
+    <Box sx={{ p: 3, backgroundColor: theme.palette.background.default }}>
+      <ListHead />
+      <ListComponent list={tasks.data} />
     </Box>
   );
 };

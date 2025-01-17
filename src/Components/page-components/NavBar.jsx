@@ -124,9 +124,9 @@ function NavBar() {
 
     return (
         <AnimateAppBar
-            initial={{ y: -70 }}
-            animate={{ y: 0 }}
-            transition={{ duration: .5, ease: 'easeIn' }}
+            // initial={{ y: -70 }}
+            // animate={{ y: 0 }}
+            // transition={{ duration: .5, ease: 'easeIn' }}
             position="sticky"
             sx={{
                 transform: scale ? "scaleY(1)" : "scaleY(0.85)",
@@ -230,7 +230,7 @@ function NavBar() {
                                             <Stack direction={'row'} spacing={2} sx={{
                                                 ml: 'auto'
                                             }}>
-                                                <Button color='error' variant='contained' onClick={() => setNewConfirm(false)}>Cancel</Button>
+                                                <Button color='error' variant='contained'  onClick={() => setNewConfirm(false)}>Cancel</Button>
                                                 <Button
                                                     variant="contained"
                                                     type='submit'
@@ -255,7 +255,8 @@ function NavBar() {
                                             </Stack>
                                         </Box>
                                     )
-                                })} >
+                                })
+                                } >
                                 <Add />
                             </Button>
                         </Tooltip>

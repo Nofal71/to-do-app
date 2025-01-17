@@ -1,18 +1,29 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
-import Home from '../pages/Home/Home';
+import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import SignInPage from '../Authentications/LoginPage';
 import SignUpPage from '../Authentications/SignupPage';
 import NavBar from '../Components/page-components/NavBar';
-import SearchTurorial from '../pages/Home/SearchTutorial';
 import SideBar from '../Components/page-components/SideBar';
 import { motion } from 'framer-motion';
+import ListHead from '../Components/page-components/ListHead';
+import ListComponent from '../Components/page-components/ListComponent';
+import useList from '../redux/Providers/ListProviders';
+import { Typography } from '@mui/material';
+
+
+
+
 
 const MainLayout = ({ children }) => {
   const location = useLocation()
+  const navigator = useNavigate()
+  const { currentList } = useList()
   useEffect(() => {
+    if (currentList?.length === 1) {
+      `/${currentList[0].path}` !== location.pathname && navigator(currentList[0].path)
+    }
     window.scrollTo({ top: 0, behavior: 'instant' })
-  }, [location])
+  }, [location, currentList])
   return (
     <>
       <NavBar />
@@ -37,41 +48,51 @@ const AuthLayout = ({ children }) => (
   </>
 );
 
+const ListLayout = ({ listData }) => {
+
+  return (
+    <MainLayout>
+      <ListHead />
+      <ListComponent list={listData} />
+    </MainLayout>
+  );
+}
+
+
 const Setup = () => {
+  const { currentList } = useList()
   return (
     <Router>
       <>
         <Routes>
-          <Route path='/' element={
-            <MainLayout>
-              <Home />
-            </MainLayout>
+          {
+            currentList?.length === 0 ? (
+              <Route
+                path='/'
+                element={
+                  <MainLayout>
+                    <Typography variant='h4' align='center' color='primary' p={5}>No List Found..!</Typography>
+                  </MainLayout>
+                }
+              />
+            ) : (
+              <Route
+                path='/'
+                element={<ListLayout listData={currentList[0].data} />}
+              />
+            )
           }
-          />
-          <Route path='/completed' element={
-            <MainLayout>
-              <SearchTurorial />
-            </MainLayout>
+
+          {
+            currentList && currentList.map((item, index) => (
+              <Route
+                key={index}
+                path={item?.path}
+                element={<ListLayout listData={item?.data} />}
+              />
+            ))
           }
-          />
-          <Route path='/todo' element={
-            <MainLayout>
-              <h1>To Do List</h1>
-            </MainLayout>
-          }
-          />
-          <Route path='/completed' element={
-            <MainLayout>
-              <h1>Completed List</h1>
-            </MainLayout>
-          }
-          />
-          <Route path='/search' element={
-            <MainLayout>
-              <SearchTurorial />
-            </MainLayout>
-          }
-          />
+
           <Route
             path='/login'
             element={

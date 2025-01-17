@@ -1,0 +1,15 @@
+/* Hide scrollbar but keep the content scrollable */
+::-webkit-scrollbar {
+    display: none;  /* Hide the scrollbar */
+}
+
+
+
+/* Optionally, if you want to enable scrolling but hide the scrollbar */
+.container {  /* Add the specific container you want to target */
+    overflow: scroll;  /* Allow scrolling */
+    -webkit-overflow-scrolling: touch;  /* Enable smooth scrolling on touch devices */
+}
+
+/* For the document body with hidden scrollbar but still scrollable content */
+

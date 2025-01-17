@@ -1,20 +1,30 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export const ListSlice = createSlice({
-    name: 'list',
+    name: "list",
     initialState: {
-        list: []
+        list: [],
     },
     reducers: {
         addListItem: (state, action) => {
-            state.list.push(action.payload)
+            const data = { ...action.payload, data: [] };
+            state.list = [...state.list, data];
         },
         removeListItem: (state, action) => {
-            return state.filter((e) => e.name !== action.payload());
-        }
-    }
+            state.list = state.list.filter((e) => e.name !== action.payload);
+        },
+        addListData: (state, action) => {
+            const { path, data } = action.payload;
+            state.list = state.list.map(item =>
+                item.path === path ? { ...item, data: [...item.data, data] } : item
+            );
+        },
+
+
+
+    },
 });
 
-export const { addListItem, removeListItem } = ListSlice.actions;
+export const { addListItem, removeListItem, addListData } = ListSlice.actions;
 
 export const ListReducer = ListSlice.reducer;
