@@ -21,6 +21,29 @@ const ListHead = () => {
     const { addtoData } = useList();
     const { setNewConfirm, setSnackBar, setAlert } = useFeedBacks();
 
+    const addList = () => {
+        if (!taskRef.current || taskRef.current.value === '') {
+            setSnackBar(true, 'Please Fill All Fields...!');
+            taskRef.current?.focus();
+        } else {
+            console.log(dateRef?.current.value, 'date');
+            try {
+                addtoData(
+                    {
+                        title: taskRef?.current.value,
+                        time: timeRef?.current.value,
+                        tags: [],
+                    },
+                    decodeURIComponent(location.pathname.slice(1)).replace(/%20/g, ' ')
+                );
+                setNewConfirm(false);
+                setAlert('Task Added Successfully', 'success');
+            } catch (error) {
+                setAlert('Unknown Error!', 'error');
+            }
+        }
+    }
+
     return (
         <Box mb={4}>
             <Typography variant="h4" sx={{ fontWeight: 700, color: theme.palette.text.primary }}>
@@ -39,7 +62,14 @@ const ListHead = () => {
                         onClick={() =>
                             setNewConfirm(true, () => {
                                 return (
-                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                                    <Box
+                                        component={'form'}
+                                        onSubmit={addList}
+                                        sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: 3
+                                        }}>
                                         <Typography color="text.primary" variant="h5">
                                             Add Task
                                         </Typography>
@@ -85,29 +115,8 @@ const ListHead = () => {
                                                 Cancel
                                             </Button>
                                             <Button
+                                                type='submit'
                                                 variant="contained"
-                                                onClick={() => {
-                                                    if (!taskRef.current || taskRef.current.value === '') {
-                                                        setSnackBar(true, 'Please Fill All Fields...!');
-                                                        taskRef.current?.focus();
-                                                    } else {
-                                                        console.log(dateRef?.current.value, 'date');
-                                                        try {
-                                                            addtoData(
-                                                                {
-                                                                    title: taskRef?.current.value,
-                                                                    time: timeRef?.current.value,
-                                                                    tags: [],
-                                                                },
-                                                                decodeURIComponent(location.pathname.slice(1)).replace(/%20/g, ' ')
-                                                            );
-                                                            setNewConfirm(false);
-                                                            setAlert('Task Added Successfully', 'success');
-                                                        } catch (error) {
-                                                            setAlert('Unknown Error!', 'error');
-                                                        }
-                                                    }
-                                                }}
                                             >
                                                 Add
                                             </Button>

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import { addListData, addListItem, removeListItem } from "../Slices/ListSlice"
+import { addListData, addListItem, editListItem, removeListItem } from "../Slices/ListSlice"
 
 const useList = () => {
     const dispatch = useDispatch()
@@ -14,7 +14,10 @@ const useList = () => {
     const removeFromList = (name) => {
         dispatch(removeListItem(name))
     }
-    return { addToList, removeFromList, addtoData, currentList }
+    const editListName = (prevName, newName) => {
+        dispatch(editListItem({ prevName, newName }))
+    }
+    return { addToList, removeFromList, addtoData, editListName, currentList }
 }
 
 export default useList

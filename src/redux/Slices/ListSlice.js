@@ -23,9 +23,19 @@ export const ListSlice = createSlice({
             const newData = { ...data, homeTag: path.toUpperCase() }
             state.list[0].data = [...state.list[0].data, newData]
         },
+        editListItem: (state, action) => {
+            const { prevName, newName } = action.payload;
+            state.list = state.list.map(item => {
+                if (item.name === prevName) {
+                    return { ...item, name: newName };
+                }
+                return item;
+            });
+        },
+
     },
 });
 
-export const { addListItem, removeListItem, addListData } = ListSlice.actions;
+export const { addListItem, removeListItem, addListData , editListItem } = ListSlice.actions;
 
 export const ListReducer = ListSlice.reducer;

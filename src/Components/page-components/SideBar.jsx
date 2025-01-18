@@ -1,10 +1,11 @@
-import { Typography } from '@mui/material';
+import { Icon, TextField, Typography } from '@mui/material';
 import { Box, Stack } from '@mui/system';
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useList from '../../redux/Providers/ListProviders';
-
+import { Edit, Save } from '@mui/icons-material';
+import useFeedBacks from '../../redux/Providers/FeedBacksProviders';
 
 
 const SideBarAnimate = motion(Box)
@@ -12,7 +13,11 @@ const SideBarAnimate = motion(Box)
 const SideBar = () => {
     const location = useLocation();
     const navigator = useNavigate()
-    const { currentList } = useList()
+    const listInput = useRef(null)
+    const { setSnackBar } = useFeedBacks()
+    const { currentList, editListName } = useList()
+    const [isEditing, setEdit] = useState(false)
+    const [selectedIndex, setIndex] = useState(null)
 
     return (
         <SideBarAnimate
@@ -38,29 +43,117 @@ const SideBar = () => {
                     List
                 </Typography>
                 {currentList && currentList.map((li, index) => (
-                    <Typography
+                    <Box
                         key={index}
-                        onClick={() => {
-                            decodeURIComponent(location.pathname?.slice(1)).replace(/%20/g, ' ') !== li.path && navigator(`/${li.path}`)
-                        }}
                         sx={{
+                            width: 1,
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
                             color: decodeURIComponent(location.pathname?.slice(1)).replace(/%20/g, ' ') === li.path ? 'primary.main' : 'text.primary',
-                            backgroundColor: decodeURIComponent(location.pathname?.slice(1)).replace(/%20/g, ' ') === li.path ? 'secondary.light' : 'transparent',
-                            px: 2,
-                            py: 1,
+                            backgroundColor: decodeURIComponent(location.pathname?.slice(1)).replace(/%20/g, ' ') === li.path ? selectedIndex !== index && 'secondary.light' : 'transparent',
                             borderRadius: '10px',
-                            fontSize: '1rem',
                             cursor: 'pointer',
+                            py: 1,
+                            px: 2,
                             ":hover": {
-                                backgroundColor: 'primary.light',
+                                backgroundColor: isEditing && selectedIndex !== index ? 'primary.light' : !isEditing && 'primary.light',
+                                color: decodeURIComponent(location.pathname?.slice(1)).replace(/%20/g, ' ') === li.path && 'text.primary'
                             },
-                        }}
-                    >
-                        {li.name}
-                    </Typography>
+                        }}>
+
+                        {isEditing && selectedIndex === index ? (
+                            <TextField
+                                fullWidth
+                                size="small"
+                                defaultValue={li.name}
+                                inputRef={listInput}
+                                color="primary"
+                                placeholder="Edit List Name"
+                                InputProps={{
+                                    endAdornment: (
+                                        <Icon
+                                            sx={{
+                                                cursor: 'pointer',
+                                                ":hover": { color: 'primary.main' }
+                                            }}
+                                            onClick={() => {
+                                                if (listInput?.current.value === '') {
+                                                    listInput?.current.focus()
+                                                    setSnackBar(true, 'Please Add List Name')
+                                                    return
+                                                }
+                                                setIndex(null)
+                                                setEdit(false)
+                                                editListName(li.name, listInput?.current.value)
+                                            }}
+                                        >
+                                            <Save />
+                                        </Icon>
+                                    ),
+                                }}
+                            />
+                        ) : (
+                            <Typography
+                                onClick={() => {
+                                    decodeURIComponent(location.pathname?.slice(1)).replace(/%20/g, ' ') !== li.path && navigator(`/${li.path}`)
+                                    setEdit(false)
+                                }}
+                                sx={{
+                                    fontSize: '1rem',
+                                    flex: 1
+                                }}
+                            >
+                                {li.name}
+                            </Typography>
+                        )}
+
+                        {
+                            isEditing && selectedIndex !== index ? (
+                                <Icon
+                                    onClick={() => {
+                                        if (isEditing) {
+                                            setSnackBar(true, 'Please Save Previous Feild First')
+                                            return
+                                        }
+                                        setIndex(index)
+                                        setEdit(prev => !prev)
+                                    }}
+                                    sx={{
+                                        display: 'flex', alignItems: 'center',
+                                        justifyContent: 'center',
+                                        p: 2,
+                                        ":hover": {
+                                            backgroundColor: 'primary.dark',
+                                            borderRadius: '10px'
+                                        }
+                                    }}>
+                                    <Edit />
+                                </Icon>
+                            ) : !isEditing && li.name !== 'Home' && (
+                                <Icon
+                                    onClick={() => {
+                                        setIndex(index)
+                                        setEdit(prev => !prev)
+                                    }}
+                                    sx={{
+                                        display: 'flex', alignItems: 'center',
+                                        justifyContent: 'center',
+                                        p: 2,
+                                        ":hover": {
+                                            color: 'white',
+                                            backgroundColor: 'primary.dark',
+                                            borderRadius: '10px'
+                                        }
+                                    }}>
+                                    <Edit />
+                                </Icon>
+                            )
+                        }
+                    </Box>
                 ))}
             </Stack>
-        </SideBarAnimate>
+        </SideBarAnimate >
     );
 };
 
