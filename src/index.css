@@ -1,13 +1,15 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Hide scrollbar but keep the content scrollable */
+::-webkit-scrollbar {
+    display: none;  /* Hide the scrollbar */
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+
+
+/* Optionally, if you want to enable scrolling but hide the scrollbar */
+.container {  /* Add the specific container you want to target */
+    overflow: scroll;  /* Allow scrolling */
+    -webkit-overflow-scrolling: touch;  /* Enable smooth scrolling on touch devices */
 }
+
+/* For the document body with hidden scrollbar but still scrollable content */
+
