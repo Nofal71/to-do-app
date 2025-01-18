@@ -1,5 +1,14 @@
-import React, { useRef } from 'react';
-import { Button, TextField, Typography } from '@mui/material';
+import React, { useRef, useState } from 'react';
+import {
+    Button,
+    Icon,
+    TextField,
+    Typography,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+} from '@mui/material';
 import { Box, Stack, useTheme } from '@mui/system';
 import { Add } from '@mui/icons-material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -14,35 +23,44 @@ const ListHead = () => {
     const taskRef = useRef(null);
     const dateRef = useRef(null);
     const timeRef = useRef(null);
-
+    const tagsRef = useRef(null);
+    const [tags, setTags] = useState([]);
+    const [openDialog, setOpenDialog] = useState(false);
     const location = useLocation();
     const theme = useTheme();
     const date = new Date();
     const { addtoData } = useList();
-    const { setNewConfirm, setSnackBar, setAlert } = useFeedBacks();
+    const { setSnackBar, setAlert } = useFeedBacks();
 
     const addList = () => {
-        if (!taskRef.current || taskRef.current.value === '') {
-            setSnackBar(true, 'Please Fill All Fields...!');
+        if (!taskRef.current || taskRef.current.value === '' || tagsRef.current.value) {
+            tagsRef.current.value ? setSnackBar(true, 'Add Tag ...!') : setSnackBar(true, 'Please Fill All Fields...!');
             taskRef.current?.focus();
         } else {
-            console.log(dateRef?.current.value, 'date');
             try {
                 addtoData(
                     {
                         title: taskRef?.current.value,
                         time: timeRef?.current.value,
-                        tags: [],
+                        tags,
                     },
                     decodeURIComponent(location.pathname.slice(1)).replace(/%20/g, ' ')
                 );
-                setNewConfirm(false);
+                setTags([]);
+                setOpenDialog(false);
                 setAlert('Task Added Successfully', 'success');
             } catch (error) {
                 setAlert('Unknown Error!', 'error');
             }
         }
-    }
+    };
+
+    const handleAddTag = () => {
+        if (tagsRef?.current && tagsRef?.current.value !== '') {
+            setTags((prev) => [...prev, tagsRef?.current.value]);
+            tagsRef.current.value = '';
+        }
+    };
 
     return (
         <Box mb={4}>
@@ -50,84 +68,104 @@ const ListHead = () => {
                 Welcome User! 👋
             </Typography>
             <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary }}>
-                {`Today, ${date.toLocaleString('en-US', { weekday: 'short' })} ${date.getDate()} ${date.toLocaleString('en-US', { month: 'long' })}, ${date.getFullYear()}`}
+                {`Today, ${date.toLocaleString('en-US', { weekday: 'short' })} ${date.getDate()} ${date.toLocaleString(
+                    'en-US',
+                    { month: 'long' }
+                )}, ${date.getFullYear()}`}
             </Typography>
-
             {location.pathname !== '/home' && (
                 <Box>
                     <Button
                         color="primary"
                         variant="contained"
                         sx={{ mt: 6 }}
-                        onClick={() =>
-                            setNewConfirm(true, () => {
-                                return (
-                                    <Box
-                                        component={'form'}
-                                        onSubmit={addList}
-                                        sx={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            gap: 3
-                                        }}>
-                                        <Typography color="text.primary" variant="h5">
-                                            Add Task
-                                        </Typography>
-                                        <Stack direction={'column'} spacing={3}>
-                                            <Stack direction={'column'} spacing={2}>
-                                                <TextField
-                                                    label="Task"
-                                                    size="small"
-                                                    variant="outlined"
-                                                    inputRef={taskRef}
-                                                    sx={{ flex: 1 }}
-                                                />
-                                            </Stack>
-
-                                            <Stack direction={'column'} spacing={2}>
-                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <DesktopDatePicker
-                                                        label="Select Date For Task"
-                                                        defaultValue={dayjs()}
-                                                        inputRef={dateRef}
-                                                        disablePast
-                                                        orientation="landscape"
-                                                        sx={{ width: '100%' }}
-                                                    />
-                                                </LocalizationProvider>
-                                            </Stack>
-
-                                            <Stack direction={'column'} spacing={2}>
-                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <TimePicker
-                                                        label="Select Time For Task"
-                                                        defaultValue={dayjs()}
-                                                        inputRef={timeRef}
-                                                        disablePast
-                                                        sx={{ width: '100%' }}
-                                                    />
-                                                </LocalizationProvider>
-                                            </Stack>
-                                        </Stack>
-
-                                        <Stack direction="row" spacing={2} sx={{ ml: 'auto', mt: 3 }}>
-                                            <Button color="error" variant="contained" onClick={() => setNewConfirm(false)}>
-                                                Cancel
-                                            </Button>
-                                            <Button
-                                                type='submit'
-                                                variant="contained"
-                                            >
-                                                Add
-                                            </Button>
-                                        </Stack>
-                                    </Box>
-                                );
-                            })
-                        }
+                        onClick={() => setOpenDialog(true)}
                     >
                         <Add />
                     </Button>
+
+                    <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="sm">
+                        <DialogTitle>Add Task</DialogTitle>
+                        <DialogContent>
+                            <Stack direction={'column'} spacing={3}>
+                                <Stack direction={'column'} spacing={2}>
+                                    <TextField
+                                        label="Task"
+                                        size="small"
+                                        variant="outlined"
+                                        inputRef={taskRef}
+                                        sx={{ flex: 1 }}
+                                    />
+                                    <TextField
+                                        label="Tags"
+                                        size="small"
+                                        variant="outlined"
+                                        inputRef={tagsRef}
+                                        sx={{ flex: 1 }}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <Icon
+                                                    sx={{
+                                                        cursor: 'pointer',
+                                                        ':hover': { color: 'primary.main' },
+                                                    }}
+                                                    onClick={handleAddTag}
+                                                >
+                                                    <Add />
+                                                </Icon>
+                                            ),
+                                            startAdornment: tags.map((tag, i) => (
+                                                <Box
+                                                    key={i}
+                                                    sx={{
+                                                        display: 'inline-grid',
+                                                        placeItems: 'center',
+                                                        background: 'lightGreen',
+                                                        color: 'black',
+                                                        px: 1,
+                                                        mr: 1,
+                                                    }}
+                                                >
+                                                    <Typography sx={{ fontSize: '.7rem' }}>{tag}</Typography>
+                                                </Box>
+                                            )),
+                                        }}
+                                    />
+                                </Stack>
+                                <Stack direction={'column'} spacing={2}>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DesktopDatePicker
+                                            label="Select Date For Task"
+                                            defaultValue={dayjs()}
+                                            inputRef={dateRef}
+                                            disablePast
+                                            orientation="landscape"
+                                            sx={{ width: '100%' }}
+                                        />
+                                    </LocalizationProvider>
+                                </Stack>
+                                <Stack direction={'column'} spacing={2}>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <TimePicker
+                                            label="Select Time For Task"
+                                            defaultValue={dayjs()}
+                                            inputRef={timeRef}
+                                            disablePast
+                                            sx={{ width: '100%' }}
+                                        />
+                                    </LocalizationProvider>
+                                </Stack>
+                            </Stack>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button color="error" onClick={() => setOpenDialog(false)}>
+                                Cancel
+                            </Button>
+                            <Button color="primary" variant="contained" onClick={addList}>
+                                Add
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </Box>
             )}
         </Box>

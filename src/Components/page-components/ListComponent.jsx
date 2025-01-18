@@ -44,20 +44,22 @@ const ListComponent = ({ list }) => {
                                                     >
                                                         {task.title}
                                                     </Typography>
-                                                    {location.pathname === '/home' && (
+                                                    {task?.tags.length > 0 && task?.tags.map((tag, index) => (
                                                         <Typography
                                                             variant="caption"
+                                                            key={index}
                                                             sx={{
                                                                 backgroundColor: theme.palette.primary.light,
                                                                 color: theme.palette.primary.contrastText,
                                                                 px: 1,
                                                                 borderRadius: 1,
                                                                 fontSize: '0.75rem',
+                                                                mr: 1
                                                             }}
                                                         >
-                                                            {task?.homeTag}
+                                                            {tag}
                                                         </Typography>
-                                                    )}
+                                                    ))}
                                                 </Box>
                                             </Stack>
                                             <Stack direction="row" alignItems="center" spacing={2}>

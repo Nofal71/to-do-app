@@ -65,7 +65,7 @@ const SideBar = () => {
                         {isEditing && selectedIndex === index ? (
                             <TextField
                                 fullWidth
-                                size="small"
+                                size="medium"
                                 defaultValue={li.name}
                                 inputRef={listInput}
                                 color="primary"
@@ -109,7 +109,7 @@ const SideBar = () => {
                         )}
 
                         {
-                            isEditing && selectedIndex !== index ? (
+                            isEditing && selectedIndex !== index && li.name !== 'Home' ? (
                                 <Icon
                                     onClick={() => {
                                         if (isEditing) {

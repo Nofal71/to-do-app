@@ -8,8 +8,8 @@ const useList = () => {
     const addToList = (name, path) => {
         dispatch(addListItem({ name, path }))
     }
-    const addtoData = (data, path) => {
-        dispatch(addListData({ data, path }))
+    const addtoData = (data, path, tags) => {
+        dispatch(addListData({ data, path, tags }))
     }
     const removeFromList = (name) => {
         dispatch(removeListItem(name))

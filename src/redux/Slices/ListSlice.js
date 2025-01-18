@@ -20,7 +20,7 @@ export const ListSlice = createSlice({
             state.list = state.list.map(item =>
                 item.path === path ? { ...item, data: [...item.data, data] } : item
             );
-            const newData = { ...data, homeTag: path.toUpperCase() }
+            const newData = { ...data }
             state.list[0].data = [...state.list[0].data, newData]
         },
         editListItem: (state, action) => {
@@ -36,6 +36,6 @@ export const ListSlice = createSlice({
     },
 });
 
-export const { addListItem, removeListItem, addListData , editListItem } = ListSlice.actions;
+export const { addListItem, removeListItem, addListData, editListItem } = ListSlice.actions;
 
 export const ListReducer = ListSlice.reducer;
