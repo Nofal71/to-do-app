@@ -1,18 +1,16 @@
-import { Button, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import React, { useRef } from 'react';
+import { Button, TextField, Typography } from '@mui/material';
 import { Box, Stack, useTheme } from '@mui/system';
-import React, { useRef, useState } from 'react';
-import useList from '../../redux/Providers/ListProviders';
-import { useLocation } from 'react-router-dom';
-import useFeedBacks from '../../redux/Providers/FeedBacksProviders';
 import { Add } from '@mui/icons-material';
-import Calendar from 'react-calendar';
-import TimePicker from 'react-time-picker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DesktopDatePicker, TimePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useLocation } from 'react-router-dom';
+import useList from '../../redux/Providers/ListProviders';
+import useFeedBacks from '../../redux/Providers/FeedBacksProviders';
+import dayjs from 'dayjs';
 
 const ListHead = () => {
-    const [taskDate, setTaskDate] = useState(new Date());
-    const [calendarOpen, setCalendarOpen] = useState(false);
-    const [taskTime, setTaskTime] = useState('08:00');
-
     const taskRef = useRef(null);
     const dateRef = useRef(null);
     const timeRef = useRef(null);
@@ -45,74 +43,60 @@ const ListHead = () => {
                                         <Typography color="text.primary" variant="h5">
                                             Add Task
                                         </Typography>
-                                        <InputLabel sx={{ color: 'text.secondary' }} size="small">
-                                            Task
-                                        </InputLabel>
-                                        <TextField size="small" variant="outlined" inputRef={taskRef} sx={{ flex: 1 }} />
-                                        <InputLabel sx={{ color: 'text.secondary' }} size="small">
-                                            Date
-                                        </InputLabel>
-                                        <Stack direction="row" spacing={2} alignItems="center">
-                                            <TextField
-                                                size="small"
-                                                variant="outlined"
-                                                readOnly
-                                                value={taskDate.toDateString()}
-                                                inputRef={dateRef}
-                                                sx={{ flex: 1 }}
-                                            />
-                                            <Button
-                                                size="small"
-                                                variant="outlined"
-                                                onClick={() => setCalendarOpen((prev) => !prev)}
-                                            >
-                                                {calendarOpen ? 'Close Calendar' : 'Open Calendar'}
-                                            </Button>
-                                        </Stack>
-                                        {calendarOpen && (
-                                            <Box sx={{ position: 'absolute', zIndex: 999 }}>
-                                                <Calendar
-                                                    onChange={(newDate) => {
-                                                        setTaskDate(newDate);
-                                                        setCalendarOpen(false);
-                                                    }}
-                                                    value={taskDate}
+                                        <Stack direction={'column'} spacing={3}>
+                                            <Stack direction={'column'} spacing={2}>
+                                                <TextField
+                                                    label="Task"
+                                                    size="small"
+                                                    variant="outlined"
+                                                    inputRef={taskRef}
+                                                    sx={{ flex: 1 }}
                                                 />
-                                            </Box>
-                                        )}
-                                        <InputLabel sx={{ color: 'text.secondary' }} size="small">
-                                            Time
-                                        </InputLabel>
-                                        <TimePicker
-                                            value={taskTime}
-                                            onChange={setTaskTime}
-                                            disableClock={true}
-                                            clearIcon={null}
-                                            clockIcon={null}
-                                            format="HH:mm:ss"
-                                            className="time-picker"
-                                        />
-                                        <Stack direction="row" spacing={2} sx={{ ml: 'auto' }}>
+                                            </Stack>
+
+                                            <Stack direction={'column'} spacing={2}>
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    <DesktopDatePicker
+                                                        label="Select Date For Task"
+                                                        defaultValue={dayjs()}
+                                                        inputRef={dateRef}
+                                                        disablePast
+                                                        orientation="landscape"
+                                                        sx={{ width: '100%' }}
+                                                    />
+                                                </LocalizationProvider>
+                                            </Stack>
+
+                                            <Stack direction={'column'} spacing={2}>
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    <TimePicker
+                                                        label="Select Time For Task"
+                                                        defaultValue={dayjs()}
+                                                        inputRef={timeRef}
+                                                        disablePast
+                                                        sx={{ width: '100%' }}
+                                                    />
+                                                </LocalizationProvider>
+                                            </Stack>
+                                        </Stack>
+
+                                        <Stack direction="row" spacing={2} sx={{ ml: 'auto', mt: 3 }}>
                                             <Button color="error" variant="contained" onClick={() => setNewConfirm(false)}>
                                                 Cancel
                                             </Button>
                                             <Button
                                                 variant="contained"
                                                 onClick={() => {
-                                                    if (
-                                                        !taskRef.current ||
-                                                        taskRef.current.value === '' ||
-                                                        !dateRef.current.value ||
-                                                        !timeRef.current.value
-                                                    ) {
+                                                    if (!taskRef.current || taskRef.current.value === '') {
                                                         setSnackBar(true, 'Please Fill All Fields...!');
                                                         taskRef.current?.focus();
                                                     } else {
+                                                        console.log(dateRef?.current.value, 'date');
                                                         try {
                                                             addtoData(
                                                                 {
-                                                                    title: taskRef.current.value,
-                                                                    time: taskTime,
+                                                                    title: taskRef?.current.value,
+                                                                    time: timeRef?.current.value,
                                                                     tags: [],
                                                                 },
                                                                 decodeURIComponent(location.pathname.slice(1)).replace(/%20/g, ' ')
