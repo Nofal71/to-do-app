@@ -1,7 +1,29 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Typography, Stack, Divider, Checkbox, IconButton, useTheme } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useLocation } from 'react-router-dom';
+import { Edit } from '@mui/icons-material';
+import ToDoForm from '../common/ToDoForm';
+
+
+const EditTask = ({ task }) => {
+
+    const [open, setOpen] = useState(false)
+
+    return (
+        <>
+            {open && (
+                <ToDoForm open={open} setOpen={setOpen} defaultValue={task} />
+            )}
+            <IconButton
+                onClick={() => {
+                    setOpen(true)
+                }}
+            >
+                <Edit />
+            </IconButton>
+        </>
+    )
+}
 
 const ListComponent = ({ list }) => {
     const theme = useTheme();
@@ -71,9 +93,7 @@ const ListComponent = ({ list }) => {
                                                 >
                                                     {task.time}
                                                 </Typography>
-                                                <IconButton>
-                                                    <MoreVertIcon />
-                                                </IconButton>
+                                                <EditTask task={task} />
                                             </Stack>
                                         </Stack>
                                         {index < list.length - 1 && <Divider sx={{ my: 2 }} />}

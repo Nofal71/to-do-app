@@ -18,12 +18,13 @@ import { motion } from 'framer-motion';
 import { Add, Search } from '@mui/icons-material';
 import useList from '../../redux/Providers/ListProviders';
 import { Stack } from '@mui/system';
+import { useNavigate } from 'react-router-dom';
 
 
 const AnimateAppBar = motion(AppBar)
 
 const pages = [];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Reset'];
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     width: 62,
@@ -87,10 +88,11 @@ function NavBar() {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [scale, setScale] = React.useState(true);
     const inputRef = React.useRef()
+    const navigator = useNavigate()
 
 
     const { toggleTheme, theme_mode, setNewConfirm, setSnackBar, setAlert } = useFeedBacks();
-    const { addToList, removeFromList } = useList()
+    const { addToList } = useList()
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -105,6 +107,9 @@ function NavBar() {
 
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
+        localStorage.clear()
+        navigator('/home')
+        window.location.reload()
     };
 
     React.useEffect(() => {
@@ -230,7 +235,7 @@ function NavBar() {
                                             <Stack direction={'row'} spacing={2} sx={{
                                                 ml: 'auto'
                                             }}>
-                                                <Button color='error' variant='contained'  onClick={() => setNewConfirm(false)}>Cancel</Button>
+                                                <Button color='error' variant='contained' onClick={() => setNewConfirm(false)}>Cancel</Button>
                                                 <Button
                                                     variant="contained"
                                                     type='submit'
