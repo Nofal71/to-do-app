@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Typography, Stack, Divider, Checkbox, IconButton, useTheme, Tooltip, Button, DialogTitle, DialogContent, Dialog, DialogActions } from '@mui/material';
+import { Box, Typography, Stack, Divider, Checkbox, IconButton, useTheme, Tooltip, Button, DialogTitle, DialogContent, Dialog, DialogActions, Collapse } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import { Delete, Edit } from '@mui/icons-material';
 import ToDoForm from '../common/ToDoForm';
 import useList from '../../redux/Providers/ListProviders';
 import { motion } from 'framer-motion';
+import { TransitionGroup } from 'react-transition-group';
 
 const MotionAnimate = motion(Divider)
+// const MotionBox = motion(Box)
 
 const DeleteDialogue = ({ taskId, open, setOpen }) => {
     const { DeleteTask } = useList()
@@ -105,114 +107,118 @@ const ListComponent = ({ list }) => {
                                 )
                             }
                             <Stack spacing={2}>
-                                {list?.map((task, index) => (
-                                    <Box sx={{ position: 'relative' }} key={index}>
-                                        <Stack direction="row" alignItems="center" justifyContent="space-between">
-                                            <Stack direction="row" alignItems="center" spacing={2}>
-                                                {
-                                                    location.pathname !== '/home' && (
-                                                        <Tooltip title={task.checked ? 'Mark As To Do' : 'Mark As Done'}>
-                                                            <Checkbox
-                                                                sx={{ zIndex: '99' }}
-                                                                checked={task?.checked}
-                                                                onChange={() => {
-                                                                    setMarkAsDone(decodeURIComponent(location.pathname.slice(1)).replace(/%20/g, ' '), task?.id)
+                                <TransitionGroup>
+                                    {list?.map((task, index) => (
+                                        <Collapse key={index}>
+                                            <Box sx={{ position: 'relative' }} >
+                                                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                                    <Stack direction="row" alignItems="center" spacing={2}>
+                                                        {
+                                                            location.pathname !== '/home' && (
+                                                                <Tooltip title={task.checked ? 'Mark As To Do' : 'Mark As Done'}>
+                                                                    <Checkbox
+                                                                        sx={{ zIndex: '99' }}
+                                                                        checked={task?.checked}
+                                                                        onChange={() => {
+                                                                            setMarkAsDone(decodeURIComponent(location.pathname.slice(1)).replace(/%20/g, ' '), task?.id)
+                                                                        }}
+                                                                    />
+                                                                </Tooltip>
+                                                            )
+                                                        }
+                                                        <Box>
+                                                            <Typography
+                                                                variant="body1"
+                                                                sx={{
+                                                                    fontWeight: 500,
+                                                                    color: theme.palette.text.primary,
                                                                 }}
-                                                            />
-                                                        </Tooltip>
-                                                    )
-                                                }
-                                                <Box>
-                                                    <Typography
-                                                        variant="body1"
-                                                        sx={{
-                                                            fontWeight: 500,
-                                                            color: theme.palette.text.primary,
-                                                        }}
-                                                    >
-                                                        {task.title}
-                                                    </Typography>
-                                                    {
-                                                        task.checked && (
-                                                            <>
-                                                                <MotionAnimate
-                                                                    initial={{ scaleX: 0, width: 0 }}
-                                                                    animate={{ scaleX: 1, width: 'auto' }}
-                                                                    key={task.checked}
-                                                                    transition={{
-                                                                        duration: 1.5,
-                                                                        repeatType: "loop",
-                                                                        ease: "easeInOut",
-                                                                    }}
+                                                            >
+                                                                {task.title}
+                                                            </Typography>
+                                                            {
+                                                                task.checked && (
+                                                                    <>
+                                                                        <MotionAnimate
+                                                                            initial={{ scaleX: 0, width: 0 }}
+                                                                            animate={{ scaleX: 1, width: 'auto' }}
+                                                                            key={task.checked}
+                                                                            transition={{
+                                                                                duration: 1.5,
+                                                                                repeatType: "loop",
+                                                                                ease: "easeInOut",
+                                                                            }}
+                                                                            sx={{
+                                                                                position: 'absolute',
+                                                                                top: location.pathname === '/home' ? 7 : 16,
+                                                                                left: -25,
+                                                                                right: -25,
+                                                                                py: .5,
+                                                                                backgroundColor: '#6c757d',
+                                                                                zIndex: '200',
+                                                                                borderRadius: '5px',
+                                                                                height: 6,
+                                                                                transformOrigin: 'left',
+                                                                            }}
+                                                                        />
+                                                                        <Box sx={{
+                                                                            position: 'absolute',
+                                                                            top: 0,
+                                                                            left: 0,
+                                                                            right: 0,
+                                                                            bottom: 0,
+                                                                            background: 'transparent',
+                                                                            zIndex: '98',
+                                                                        }} />
+                                                                    </>
+                                                                )
+                                                            }
+                                                            {task?.tags.length > 0 && task?.tags.map((tag, index) => (
+                                                                <Typography
+                                                                    variant="caption"
+                                                                    key={index}
                                                                     sx={{
-                                                                        position: 'absolute',
-                                                                        top: location.pathname === '/home' ? 7 : 16,
-                                                                        left: -25,
-                                                                        right: -25,
-                                                                        py: .5,
-                                                                        backgroundColor: '#6c757d',
-                                                                        zIndex: '200',
-                                                                        borderRadius: '5px',
-                                                                        height: 6,
-                                                                        transformOrigin: 'left',
+                                                                        backgroundColor: theme.palette.primary.light,
+                                                                        color: theme.palette.primary.contrastText,
+                                                                        px: 1,
+                                                                        borderRadius: 1,
+                                                                        fontSize: '0.75rem',
+                                                                        mr: 1
                                                                     }}
-                                                                />
-                                                                <Box sx={{
-                                                                    position: 'absolute',
-                                                                    top: 0,
-                                                                    left: 0,
-                                                                    right: 0,
-                                                                    bottom: 0,
-                                                                    background: 'transparent',
-                                                                    zIndex: '98',
-                                                                }} />
-                                                            </>
-                                                        )
-                                                    }
-                                                    {task?.tags.length > 0 && task?.tags.map((tag, index) => (
+                                                                >
+                                                                    {tag}
+                                                                </Typography>
+                                                            ))}
+                                                        </Box>
+                                                    </Stack>
+                                                    <Stack direction="row" alignItems="center" spacing={2}>
                                                         <Typography
-                                                            variant="caption"
-                                                            key={index}
+                                                            variant="body2"
                                                             sx={{
-                                                                backgroundColor: theme.palette.primary.light,
-                                                                color: theme.palette.primary.contrastText,
-                                                                px: 1,
-                                                                borderRadius: 1,
-                                                                fontSize: '0.75rem',
-                                                                mr: 1
+                                                                color: theme.palette.text.secondary,
                                                             }}
                                                         >
-                                                            {tag}
+                                                            {task.time}
                                                         </Typography>
-                                                    ))}
-                                                </Box>
-                                            </Stack>
-                                            <Stack direction="row" alignItems="center" spacing={2}>
-                                                <Typography
-                                                    variant="body2"
-                                                    sx={{
-                                                        color: theme.palette.text.secondary,
-                                                    }}
-                                                >
-                                                    {task.time}
-                                                </Typography>
-                                                {
-                                                    location.pathname !== '/home' && (
-                                                        <EditTask task={task} />
-                                                    )
-                                                }
-                                            </Stack>
-                                        </Stack>
-                                        {index < list.length - 1 && (
-                                            <MotionAnimate
-                                                sx={{ my: 2 }}
-                                                initial={{ scaleX: 0 }}
-                                                animate={{ scaleX: 1 }}
-                                                transition={{ duration: 1, ease: "easeInOut" }}
-                                            />
-                                        )}
-                                    </Box>
-                                ))}
+                                                        {
+                                                            location.pathname !== '/home' && (
+                                                                <EditTask task={task} />
+                                                            )
+                                                        }
+                                                    </Stack>
+                                                </Stack>
+                                                {index < list.length - 1 && (
+                                                    <MotionAnimate
+                                                        sx={{ my: 2 }}
+                                                        initial={{ scaleX: 0 }}
+                                                        animate={{ scaleX: 1 }}
+                                                        transition={{ duration: 1, ease: "easeInOut" }}
+                                                    />
+                                                )}
+                                            </Box>
+                                        </Collapse>
+                                    ))}
+                                </TransitionGroup>
                             </Stack>
                         </Box>
                     </Box>

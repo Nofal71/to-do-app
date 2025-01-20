@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { Icon, Input, InputAdornment, InputLabel, styled, Switch, TextField } from '@mui/material';
+import { InputAdornment, InputLabel, styled, Switch, TextField } from '@mui/material';
 import useFeedBacks from '../../redux/Providers/FeedBacksProviders';
 import { motion } from 'framer-motion';
 import { Add, Search } from '@mui/icons-material';
@@ -164,19 +164,6 @@ function NavBar() {
                         To Do List
                     </Typography>
 
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
-                            color="inherit"
-                        >
-                            <MenuIcon />
-                        </IconButton>
-
-                    </Box>
                     <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
                     <Typography
                         variant="h5"
