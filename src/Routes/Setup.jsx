@@ -22,7 +22,6 @@ const MainLayout = ({ children }) => {
     if (currentList?.length === 1) {
       currentList[0].path !== decodeURIComponent(location.pathname?.slice(1)).replace(/%20/g, ' ') && navigator(currentList[0].path)
     }
-    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [location, currentList])
   return (
     <>
@@ -53,7 +52,7 @@ const ListLayout = ({ listData }) => {
   return (
     <MainLayout>
       <ListHead />
-      <ListComponent list={listData}  />
+      <ListComponent list={listData} />
     </MainLayout>
   );
 }

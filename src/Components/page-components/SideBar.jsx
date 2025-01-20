@@ -21,9 +21,9 @@ const SideBar = () => {
 
     return (
         <SideBarAnimate
-            // initial={{ opacity: 0, x: -500 }}
-            // animate={{ opacity: 1, x: 0 }}
-            // transition={{ duration: 1, ease: 'easeIn' }}
+            initial={{ opacity: 0, x: -500 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: 'easeIn' }}
             sx={{
                 position: 'fixed',
                 top: '60px',

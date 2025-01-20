@@ -16,7 +16,7 @@ import dayjs from 'dayjs';
 import { Grid, Box, Typography } from '@mui/material';
 
 export default function ToDoForm({ open, setOpen, defaultValue }) {
-    const { addtoData } = useList();
+    const { addtoData, EditTask } = useList();
     const { setAlert } = useFeedBacks();
     const editValues = {
         task: defaultValue && defaultValue.title,
@@ -48,6 +48,7 @@ export default function ToDoForm({ open, setOpen, defaultValue }) {
         try {
             addtoData(
                 {
+                    checked: false,
                     title: data.task,
                     time: data.time,
                     date: data.date,
@@ -65,6 +66,14 @@ export default function ToDoForm({ open, setOpen, defaultValue }) {
 
     const editList = (data) => {
         try {
+            EditTask(
+                decodeURIComponent(location.pathname.slice(1)).replace(/%20/g, ' '),
+                {
+                    id: defaultValue.id,
+                    title: data.task,
+                    tags,
+                }
+            )
             setTags([]);
             setAlert('Task Edited Successfully', 'success');
             handleClose()
