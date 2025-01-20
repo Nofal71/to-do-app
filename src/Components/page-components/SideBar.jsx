@@ -131,6 +131,7 @@ const SideBar = () => {
                                     <Typography
                                         onClick={() => {
                                             decodeURIComponent(location.pathname?.slice(1)).replace(/%20/g, ' ') !== li.path && navigator(`/${li.path}`);
+                                            setOpen(false)
                                             setEdit(false);
                                         }}
                                         sx={{
