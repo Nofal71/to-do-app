@@ -164,7 +164,6 @@ function NavBar() {
                         To Do List
                     </Typography>
 
-                    <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
                     <Typography
                         variant="h5"
                         noWrap
@@ -184,6 +183,60 @@ function NavBar() {
                         To Do
                     </Typography>
 
+                    <Tooltip title='Create New List'>
+                        <Button
+                            color='primary'
+                            variant='contained'
+                            sx={{ ml: 'auto' }}
+                            onClick={() => setNewConfirm(true, () => {
+                                return (
+                                    <Box
+                                        component={'form'}
+                                        sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: 3
+                                        }}>
+                                        <Typography color='text.primary' variant='h5'>Add List</Typography>
+                                        <InputLabel sx={{ color: 'text.secondary' }} size='small'>Name of List</InputLabel>
+                                        <TextField size='small' variant='outlined' inputRef={inputRef} sx={{
+                                            flex: 1
+                                        }} />
+                                        <Stack direction={'row'} spacing={2} sx={{
+                                            ml: 'auto'
+                                        }}>
+                                            <Button color='error' variant='contained' onClick={() => setNewConfirm(false)}>Cancel</Button>
+                                            <Button
+                                                variant="contained"
+                                                type='submit'
+                                                onClick={() => {
+                                                    if (!inputRef.current || inputRef?.current.value === '') {
+                                                        setSnackBar(true, 'Please Fill All Fields...!');
+                                                        inputRef.current?.focus()
+                                                    } else {
+                                                        try {
+                                                            addToList(inputRef?.current.value, inputRef?.current.value.toLowerCase());
+                                                            setNewConfirm(false)
+                                                            setAlert('List Created Successfully', 'success');
+                                                        } catch (error) {
+                                                            setAlert('Unkown Error!', 'error');
+                                                        }
+                                                    }
+                                                }}
+                                            >
+                                                Add
+                                            </Button>
+
+                                        </Stack>
+                                    </Box>
+                                )
+                            })
+                            } >
+                            <Add />
+                        </Button>
+                    </Tooltip>
+
+
 
                     <Box sx={{ flexGrow: 1, gap: 2, display: { xs: 'none', md: 'flex' }, mx: { md: '1rem' }, alignItems: 'center' }}>
                         <TextField
@@ -201,7 +254,6 @@ function NavBar() {
                             }}
                         />
                         <Tooltip title='Create New List'>
-
                             <Button
                                 color='primary'
                                 variant='contained'
