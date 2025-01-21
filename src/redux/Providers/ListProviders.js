@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import { addListData, addListItem, deleteTask, editListItem, editTaskData, removeListItem, setCheck } from "../Slices/ListSlice"
+import { addListData, addListItem, deleteTask, editListItem, editTaskData, refreshHome, removeListItem, setCheck } from "../Slices/ListSlice"
 
 const useList = () => {
     const dispatch = useDispatch()
@@ -26,8 +26,18 @@ const useList = () => {
     const EditTask = (path, updatedTask) => {
         dispatch(editTaskData({ path, updatedTask }))
     }
+    const refreshHomeData = (name) => {
+        let data = [];
+        currentList?.map(list => {
+            if (name !== list.name) {
+                data = [...list?.data]
+            }
+        })
+        console.log(data)
+        dispatch(refreshHome(data))
+    }
 
-    return { addToList, removeFromList, addtoData, editListName, setMarkAsDone, DeleteTask, EditTask, currentList }
+    return { addToList, removeFromList, addtoData, editListName, setMarkAsDone, DeleteTask, EditTask, refreshHomeData, currentList }
 }
 
 export default useList

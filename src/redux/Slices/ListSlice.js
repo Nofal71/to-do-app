@@ -79,18 +79,13 @@ export const ListSlice = createSlice({
                 task.id === id ? { ...task, checked: !task.checked } : task
             );
         },
-        // updateHomeListData: (state, action) => {
-        //     const { updatedTask } = action.payload;
-        //     const id = updatedTask?.id;
-
-        //     state.list[0].data = state.list[0].data.map((task) =>
-        //         task.id === id ? {...updatedTask } : task
-        //     );
-        // },
+        refreshHome: (state, action) => {
+            state.list[0].data = action.payload
+        },
 
     },
 });
 
-export const { addListItem, removeListItem, addListData, editListItem, setCheck, deleteTask, editTaskData } = ListSlice.actions;
+export const { addListItem, removeListItem, addListData, editListItem, setCheck, deleteTask, editTaskData, refreshHome } = ListSlice.actions;
 
 export const ListReducer = ListSlice.reducer;

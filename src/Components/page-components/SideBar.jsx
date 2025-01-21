@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import React, { useRef, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useList from '../../redux/Providers/ListProviders';
-import { Edit, Menu, Save } from '@mui/icons-material';
+import { Edit, Menu, Save, Delete } from '@mui/icons-material';
 import useFeedBacks from '../../redux/Providers/FeedBacksProviders';
 
 const SideBarAnimate = motion(Box);
@@ -14,8 +14,8 @@ const SideBar = () => {
     const location = useLocation();
     const navigator = useNavigate();
     const listInput = useRef(null);
-    const { setSnackBar } = useFeedBacks();
-    const { currentList, editListName } = useList();
+    const { setSnackBar, setConfirm } = useFeedBacks();
+    const { currentList, editListName, removeFromList, refreshHomeData } = useList();
     const [isEditing, setEdit] = useState(false);
     const [selectedIndex, setIndex] = useState(null);
     const [isMobile, setMobile] = useState(false);
@@ -99,11 +99,12 @@ const SideBar = () => {
                                 {isEditing && selectedIndex === index ? (
                                     <TextField
                                         fullWidth
-                                        size="medium"
+                                        size="small"
                                         defaultValue={li.name}
                                         inputRef={listInput}
                                         color="primary"
                                         placeholder="Edit List Name"
+                                        sx={{ mr: 4 }}
                                         InputProps={{
                                             endAdornment: (
                                                 <Icon
@@ -131,7 +132,7 @@ const SideBar = () => {
                                     <Typography
                                         onClick={() => {
                                             decodeURIComponent(location.pathname?.slice(1)).replace(/%20/g, ' ') !== li.path && navigator(`/${li.path}`);
-                                            setOpen(false)
+                                            isMobile && setOpen(false)
                                             setEdit(false);
                                         }}
                                         sx={{
@@ -143,46 +144,63 @@ const SideBar = () => {
                                     </Typography>
                                 )}
 
-                                {isEditing && selectedIndex !== index && li.name !== 'Home' ? (
-                                    <Icon
-                                        onClick={() => {
-                                            if (isEditing) {
-                                                setSnackBar(true, 'Please Save Previous Field First');
-                                                return;
-                                            }
-                                            setIndex(index);
-                                            setEdit(prev => !prev);
-                                        }}
-                                        sx={{
-                                            display: 'flex', alignItems: 'center',
-                                            justifyContent: 'center',
-                                            p: 2,
-                                            ":hover": {
-                                                backgroundColor: 'primary.dark',
-                                                borderRadius: '10px'
-                                            }
-                                        }}>
-                                        <Edit />
-                                    </Icon>
-                                ) : !isEditing && li.name !== 'Home' && (
-                                    <Icon
-                                        onClick={() => {
-                                            setIndex(index);
-                                            setEdit(prev => !prev);
-                                        }}
-                                        sx={{
-                                            display: 'flex', alignItems: 'center',
-                                            justifyContent: 'center',
-                                            p: 2,
-                                            ":hover": {
-                                                color: 'white',
-                                                backgroundColor: 'primary.dark',
-                                                borderRadius: '10px'
-                                            }
-                                        }}>
-                                        <Edit />
-                                    </Icon>
-                                )}
+                                <Stack direction="row" spacing={1}>
+                                    {li.name !== 'Home' && (
+                                        <Icon
+                                            onClick={() => {
+                                                if (isEditing && selectedIndex !== index) {
+                                                    setSnackBar(true, 'Please Save Previous Field First');
+                                                    return;
+                                                }
+                                                setIndex(index);
+                                                setEdit(prev => !prev);
+                                            }}
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                p: 1,
+                                                ":hover": {
+                                                    backgroundColor: 'primary.dark',
+                                                    borderRadius: '10px',
+                                                    color: 'white',
+                                                }
+                                            }}
+                                        >
+                                            <Edit />
+                                        </Icon>
+                                    )}
+
+                                    {li.name !== 'Home' && (
+                                        <Icon
+                                            onClick={() => {
+                                                setConfirm(true, 'Delete', `Are You Sure To Delete ${li.name}`, [
+                                                    {
+                                                        lable: 'Delete', color: 'error', variant: 'contained', handler: () => {
+                                                            removeFromList(li.name)
+                                                            navigator('/home')
+                                                            // refreshHomeData(li.name)
+                                                        }
+                                                    },
+                                                    { lable: 'Cancel', sx: { backgroundColor: 'primary' } }
+                                                ])
+                                            }}
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                p: 1,
+                                                ":hover": {
+                                                    backgroundColor: 'error.main',
+                                                    borderRadius: '10px',
+                                                    color: 'white',
+                                                }
+                                            }}
+                                        >
+                                            <Delete />
+                                        </Icon>
+                                    )}
+                                </Stack>
                             </Box>
                         ))}
                     </Stack>
