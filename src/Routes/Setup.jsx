@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import SignInPage from '../Authentications/LoginPage';
 import SignUpPage from '../Authentications/SignupPage';
@@ -10,19 +10,32 @@ import ListComponent from '../Components/page-components/ListComponent';
 import useList from '../redux/Providers/ListProviders';
 import { Typography } from '@mui/material';
 
-
-
-
-
 const MainLayout = ({ children }) => {
   const location = useLocation()
   const navigator = useNavigate()
   const { currentList } = useList()
+  const [isMobile, setMobile] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 500) {
+        setMobile(true);
+      } else {
+        setMobile(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+
   useEffect(() => {
     if (currentList?.length === 1) {
       currentList[0].path !== decodeURIComponent(location.pathname?.slice(1)).replace(/%20/g, ' ') && navigator(currentList[0].path)
     }
-    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [location, currentList])
   return (
     <>
@@ -33,7 +46,7 @@ const MainLayout = ({ children }) => {
         animate={{ opacity: 1, overflow: 'auto', y: 0 }}
         transition={{ duration: 1, ease: 'easeIn' }}
         style={{
-          marginLeft: 'calc(100%/5)',
+          marginLeft: !isMobile && 'calc(100%/5)',
           padding: '40px 20px'
         }}>
         {children}
@@ -53,7 +66,7 @@ const ListLayout = ({ listData }) => {
   return (
     <MainLayout>
       <ListHead />
-      <ListComponent list={listData}  />
+      <ListComponent list={listData} />
     </MainLayout>
   );
 }

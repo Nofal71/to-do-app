@@ -82,9 +82,14 @@ export default function AlertDialog() {
                           <Button
                             variant={action.variant && action.variant}
                             sx={action.sx}
+                            color={action?.color && action.color}
                             onClick={() => {
-                              action.handler();
-                              setConfirm(false);
+                              try {
+                                action.handler();
+                                setConfirm(false);
+                              } catch (error) {
+                                setConfirm(false);
+                              }
                             }}
                           >
                             {action?.lable}

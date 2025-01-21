@@ -12,18 +12,19 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { Icon, Input, InputAdornment, InputLabel, styled, Switch, TextField } from '@mui/material';
+import { InputAdornment, InputLabel, styled, Switch, TextField } from '@mui/material';
 import useFeedBacks from '../../redux/Providers/FeedBacksProviders';
 import { motion } from 'framer-motion';
 import { Add, Search } from '@mui/icons-material';
 import useList from '../../redux/Providers/ListProviders';
 import { Stack } from '@mui/system';
+import { useNavigate } from 'react-router-dom';
 
 
 const AnimateAppBar = motion(AppBar)
 
 const pages = [];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Reset'];
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     width: 62,
@@ -87,10 +88,11 @@ function NavBar() {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [scale, setScale] = React.useState(true);
     const inputRef = React.useRef()
+    const navigator = useNavigate()
 
 
     const { toggleTheme, theme_mode, setNewConfirm, setSnackBar, setAlert } = useFeedBacks();
-    const { addToList, removeFromList } = useList()
+    const { addToList } = useList()
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -105,6 +107,9 @@ function NavBar() {
 
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
+        localStorage.clear()
+        navigator('/home')
+        window.location.reload()
     };
 
     React.useEffect(() => {
@@ -159,20 +164,6 @@ function NavBar() {
                         To Do List
                     </Typography>
 
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
-                            color="inherit"
-                        >
-                            <MenuIcon />
-                        </IconButton>
-
-                    </Box>
-                    <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
                     <Typography
                         variant="h5"
                         noWrap
@@ -193,6 +184,63 @@ function NavBar() {
                     </Typography>
 
 
+                    <Box sx={{
+                        display: { xs: 'flex', md: 'none' },
+                    }}>
+                        <Tooltip title='Create New List'>
+                            <Button
+                                color='primary'
+                                variant='contained'
+                                sx={{ ml: 'auto' }}
+                                onClick={() => setNewConfirm(true, () => {
+                                    return (
+                                        <Box
+                                            component={'form'}
+                                            sx={{
+                                                flexDirection: 'column',
+                                                gap: 3
+                                            }}>
+                                            <Typography color='text.primary' variant='h5'>Add List</Typography>
+                                            <InputLabel sx={{ color: 'text.secondary' }} size='small'>Name of List</InputLabel>
+                                            <TextField size='small' variant='outlined' inputRef={inputRef} sx={{
+                                                flex: 1
+                                            }} />
+                                            <Stack direction={'row'} spacing={2} sx={{
+                                                ml: 'auto'
+                                            }}>
+                                                <Button color='error' variant='contained' onClick={() => setNewConfirm(false)}>Cancel</Button>
+                                                <Button
+                                                    variant="contained"
+                                                    type='submit'
+                                                    onClick={() => {
+                                                        if (!inputRef.current || inputRef?.current.value === '') {
+                                                            setSnackBar(true, 'Please Fill All Fields...!');
+                                                            inputRef.current?.focus()
+                                                        } else {
+                                                            try {
+                                                                addToList(inputRef?.current.value, inputRef?.current.value.toLowerCase());
+                                                                setNewConfirm(false)
+                                                                setAlert('List Created Successfully', 'success');
+                                                            } catch (error) {
+                                                                setAlert('Unkown Error!', 'error');
+                                                            }
+                                                        }
+                                                    }}
+                                                >
+                                                    Add
+                                                </Button>
+
+                                            </Stack>
+                                        </Box>
+                                    )
+                                })
+                                } >
+                                <Add />
+                            </Button>
+                        </Tooltip>
+                    </Box>
+
+
                     <Box sx={{ flexGrow: 1, gap: 2, display: { xs: 'none', md: 'flex' }, mx: { md: '1rem' }, alignItems: 'center' }}>
                         <TextField
                             size='small'
@@ -209,7 +257,6 @@ function NavBar() {
                             }}
                         />
                         <Tooltip title='Create New List'>
-
                             <Button
                                 color='primary'
                                 variant='contained'
@@ -230,7 +277,7 @@ function NavBar() {
                                             <Stack direction={'row'} spacing={2} sx={{
                                                 ml: 'auto'
                                             }}>
-                                                <Button color='error' variant='contained'  onClick={() => setNewConfirm(false)}>Cancel</Button>
+                                                <Button color='error' variant='contained' onClick={() => setNewConfirm(false)}>Cancel</Button>
                                                 <Button
                                                     variant="contained"
                                                     type='submit'
