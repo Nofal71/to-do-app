@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const useSearch = ({ data, input }) => {
     const [filteredData, setFilteredData] = useState(data);
     const [progress, setProgress] = useState(false)
+    const location = useLocation()
 
     useEffect(() => {
         setProgress(true)
@@ -13,7 +15,7 @@ const useSearch = ({ data, input }) => {
             } else {
                 const lowerCaseQuery = input?.toLowerCase();
                 const filtered = data.filter((item) =>
-                    item.name.toLowerCase().includes(lowerCaseQuery)
+                    item.title.toLowerCase().includes(lowerCaseQuery)
                 );
                 setFilteredData(filtered);
                 setProgress(false)
@@ -21,7 +23,7 @@ const useSearch = ({ data, input }) => {
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [input, data]);
+    }, [input, data, location]);
 
     return { filteredData, progress };
 };

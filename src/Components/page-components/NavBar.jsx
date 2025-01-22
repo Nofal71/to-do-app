@@ -1,24 +1,25 @@
-import * as React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { InputAdornment, InputLabel, styled, Switch, TextField } from '@mui/material';
+import { InputLabel, styled, Switch, TextField } from '@mui/material';
 import useFeedBacks from '../../redux/Providers/FeedBacksProviders';
 import { motion } from 'framer-motion';
-import { Add, Search } from '@mui/icons-material';
+import { Add } from '@mui/icons-material';
 import useList from '../../redux/Providers/ListProviders';
 import { Stack } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setSearchInput } from '../../redux/Slices/SearchSlice';
 
 
 const AnimateAppBar = motion(AppBar)
@@ -84,27 +85,18 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 
 function NavBar() {
-    const [anchorElNav, setAnchorElNav] = React.useState(null);
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
-    const [scale, setScale] = React.useState(true);
-    const inputRef = React.useRef()
+    const [anchorElUser, setAnchorElUser] = useState(null);
+    const [scale, setScale] = useState(true);
+    const [search, setSearch] = useState('');
+    const dispatch = useDispatch()
+    const inputRef = useRef()
     const navigator = useNavigate()
-
-
     const { toggleTheme, theme_mode, setNewConfirm, setSnackBar, setAlert } = useFeedBacks();
     const { addToList } = useList()
 
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
-
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
-    };
-
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
         localStorage.clear()
@@ -112,7 +104,12 @@ function NavBar() {
         window.location.reload()
     };
 
-    React.useEffect(() => {
+    const handleSearchChange = (e) => {
+        e && setSearch(e.target.value)
+        dispatch(setSearchInput(search))
+    }
+
+    useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY === 0) {
                 setScale(true);
@@ -127,11 +124,16 @@ function NavBar() {
         };
     }, []);
 
+    useEffect(() => {
+        setSearch('')
+        handleSearchChange('')
+    }, [location.pathname])
+
     return (
         <AnimateAppBar
-            // initial={{ y: -70 }}
-            // animate={{ y: 0 }}
-            // transition={{ duration: .5, ease: 'easeIn' }}
+            initial={{ y: -70 }}
+            animate={{ y: 0 }}
+            transition={{ duration: .5, ease: 'easeIn' }}
             position="sticky"
             sx={{
                 transform: scale ? "scaleY(1)" : "scaleY(0.85)",
@@ -248,13 +250,9 @@ function NavBar() {
                             label="Search"
                             variant="outlined"
                             color='primary'
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment sx={{ cursor: 'pointer' }} position="end">
-                                        <Search />
-                                    </InputAdornment>
-                                ),
-                            }}
+                            defaultValue={''}
+                            value={search}
+                            onChange={handleSearchChange}
                         />
                         <Tooltip title='Create New List'>
                             <Button

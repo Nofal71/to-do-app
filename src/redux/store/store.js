@@ -3,6 +3,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { FeedBackReducer } from "../Slices/FeedBackSlice";
 import { ListReducer } from "../Slices/ListSlice";
+import { SearchReducer } from "../Slices/SearchSlice";
 
 
 const feedbackPersistConfig = {
@@ -24,6 +25,7 @@ const persistedListReducer = persistReducer(ListReducerConfig, ListReducer);
 const rootReducer = combineReducers({
     feedbacks: persistedFeedbacksReducer,
     list: persistedListReducer,
+    search: SearchReducer,
 });
 
 export const store = configureStore({
